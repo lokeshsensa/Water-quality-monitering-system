@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Smart Water Quality Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+background:linear-gradient(135deg,#1e3a8a,#2563eb,#0ea5e9);
+
+color:white;
+}
+
+/* Glass Card */
+
+.container{
+display:flex;
+gap:30px;
+margin-top:40px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+
+width:200px;
+padding:25px;
+
+background:rgba(255,255,255,0.1);
+border-radius:20px;
+
+backdrop-filter:blur(15px);
+
+border:1px solid rgba(255,255,255,0.3);
+
+transition:0.4s;
+
+box-shadow:0 8px 32px rgba(0,0,0,0.3);
+
+}
+
+/* Hover Animation */
+
+.card:hover{
+
+transform:translateY(-10px) scale(1.05);
+
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+
+background:rgba(255,255,255,0.2);
+
+}
+
+.title{
+
+font-size:18px;
+margin-bottom:10px;
+
+}
+
+.value{
+
+font-size:35px;
+font-weight:bold;
+
+color:#a5f3fc;
+
+}
+
+h1{
+
+font-size:40px;
+
+text-shadow:0 0 20px rgba(255,255,255,0.7);
+
+}
+
+/* Status */
+
+.status{
+
+margin-top:40px;
+font-size:35px;
+font-weight:bold;
+
+padding:15px 30px;
+
+border-radius:15px;
+
+backdrop-filter:blur(10px);
+
+background:rgba(255,255,255,0.1);
+
+}
+
+.safe{
+
+color:#22c55e;
+}
+
+.danger{
+
+color:#ef4444;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<h1>IOT Based Water Quality Monitoring System</h1>
+
+
+<div class="container">
+
+<div class="card">
+<div class="title">Temperature</div>
+<div id="temp" class="value">--</div>
+</div>
+
+
+<div class="card">
+<div class="title">TDS</div>
+<div id="tds" class="value">--</div>
+</div>
+
+
+<div class="card">
+<div class="title">Turbidity</div>
+<div id="turb" class="value">--</div>
+</div>
+
+</div>
+
+
+<div id="status" class="status">Loading...</div>
+
+
+
+<script>
+const channelID="3293300";
+
+
+function loadData(){
+
+fetch(`https://api.thingspeak.com/channels/${3293300}/feeds/last.json`)
+.then(response=>response.json())
+.then(data=>{
+
+let temp=data.field1;
+let turb=data.field2;
+let tds=data.field3;
+let status=data.field4;
+
+document.getElementById("temp").innerText=temp+" °C";
+document.getElementById("tds").innerText=tds+" ppm";
+document.getElementById("turb").innerText=turb;
+
+if(status==1){
+
+document.getElementById("status").innerHTML="<span class='safe'>SAFE TO DRINK</span>";
+
+}
+else{
+
+document.getElementById("status").innerHTML="<span class='danger'>NOT SAFE</span>";
+
+}
+
+});
+
+}
+
+
+loadData();
+
+setInterval(loadData,5000);
+
+</script>
+
+</body>
+
+</html>
